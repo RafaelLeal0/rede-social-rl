@@ -78,6 +78,336 @@ $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
 
 <?php include '../includes/header.php'; ?>
 
+<style>
+.feed-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.sidebar {
+    flex: 0 0 250px;
+    margin-right: 20px;
+}
+
+.feed {
+    flex: 1;
+}
+
+.profile-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-outline {
+    background: none;
+    border: 2px solid #007bff;
+    color: #007bff;
+}
+
+.btn-outline:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.trending-topics {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.trending-topics h3 {
+    margin-bottom: 10px;
+}
+
+.trending-topics ul {
+    list-style: none;
+    padding: 0;
+}
+
+.trending-topics li {
+    margin-bottom: 8px;
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 40px 10px 16px;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.search-box button {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.search-box button:hover {
+    color: #0056b3;
+}
+
+.suggestions {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.suggestions h3 {
+    margin-bottom: 10px;
+}
+
+.suggestion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.suggestion-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.suggestion-info {
+    flex: 1;
+}
+
+.suggestion-info strong {
+    display: block;
+    color: #333;
+}
+
+.suggestion-info span {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.footer-links {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.footer-links a {
+    margin: 0 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.empty-state h3 {
+    margin-bottom: 10px;
+}
+
+.post {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.post-header-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0;
+}
+
+.post-user-time {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.post-user {
+    font-weight: bold;
+    color: #333;
+}
+
+.post-time {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.post-content {
+    margin: 10px 0;
+}
+
+.post-image {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.post-action {
+    display: flex;
+    align-items: center;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.post-action:hover {
+    text-decoration: underline;
+}
+
+.post-action .count {
+    margin-left: 5px;
+}
+
+.post-options-menu {
+    position: relative;
+    display: inline-block;
+}
+.post-options-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #888;
+    cursor: pointer;
+    padding: 0 8px;
+}
+.post-options-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 28px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    min-width: 120px;
+    z-index: 10;
+}
+.post-options-menu.open .post-options-dropdown {
+    display: block;
+}
+.post-options-dropdown a {
+    display: block;
+    padding: 10px 16px;
+    color: #222;
+    text-decoration: none;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+.post-options-dropdown a:last-child {
+    border-bottom: none;
+}
+.post-options-dropdown a:hover {
+    background: #f5f5f5;
+}
+.post-date {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-top: 2px;
+}
+</style>
+<script>
+// Abrir/fechar menu de opções dos posts
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.post-options-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.post-options-menu').forEach(function(menu) {
+                if (menu !== btn.parentElement) menu.classList.remove('open');
+            });
+            btn.parentElement.classList.toggle('open');
+        });
+    });
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('post-options-btn')) {
+            document.querySelectorAll('.post-options-menu').forEach(function(menu) {
+                menu.classList.remove('open');
+            });
+        }
+    });
+});
+</script>
+
 <div class="container">
     <div class="feed-container">
         <!-- Sidebar esquerda -->
@@ -125,11 +455,25 @@ $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
                     <?php foreach ($posts as $post): ?>
                         <div class="post">
                             <div class="post-header">
-                                <img src="../uploads/avatars/<?php echo $post['avatar']; ?>" alt="Avatar" class="post-avatar">
-                                <div>
-                                    <div class="post-user"><?php echo $post['username']; ?></div>
-                                    <div class="post-time"><?php echo time_elapsed_string($post['data_postagem']); ?></div>
+                                <div class="post-header-info">
+                                    <img src="../uploads/avatars/<?php echo $post['avatar']; ?>" alt="Avatar" class="post-avatar">
+                                    <div class="post-user-time">
+                                        <div class="post-user"><?php echo $post['username']; ?></div>
+                                        <div class="post-time"><?php echo time_elapsed_string($post['data_postagem']); ?></div>
+                                        <div class="post-date">
+                                            <?php echo date('d/m/Y H:i', strtotime($post['data_postagem'])); ?>
+                                        </div>
+                                    </div>
                                 </div>
+                                <?php if ($_SESSION['usuario_id'] == $post['usuario_id']): ?>
+                                    <div class="post-options-menu">
+                                        <button class="post-options-btn" title="Opções">&#x22EE;</button>
+                                        <div class="post-options-dropdown">
+                                            <a href="edit-post.php?id=<?php echo $post['id']; ?>">Editar</a>
+                                            <a href="delete-post.php?id=<?php echo $post['id']; ?>" onclick="return confirm('Tem certeza que deseja excluir este post?');">Excluir</a>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                             <div class="post-content">
                                 <?php echo nl2br(htmlspecialchars($post['conteudo'])); ?>
