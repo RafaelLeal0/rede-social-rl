@@ -1,6 +1,4 @@
 <?php
-// includes/functions.php
-
 function getUsuarioById($pdo, $id) {
     $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ?");
     $stmt->execute([$id]);

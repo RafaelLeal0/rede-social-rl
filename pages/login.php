@@ -1,5 +1,4 @@
 <?php
-// pages/login.php
 session_start();
 require_once '../includes/conexao.php';
 

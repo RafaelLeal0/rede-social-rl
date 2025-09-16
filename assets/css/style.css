@@ -251,8 +251,6 @@ body {
         font-size: 18px;
     }
 }
-
-/* Estilos específicos para o feed */
 .feed-container {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;

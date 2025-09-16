@@ -1,6 +1,4 @@
 <?php
-// includes/header.php
-// Removido session_start() duplicado
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
