@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $pdo->prepare("UPDATE posts SET conteudo = ?, imagem = ? WHERE id = ?");
     $stmt->execute([$conteudo, $imagem, $post_id]);
-    // Redireciona para o perfil do usuário dono do post com mensagem de sucesso
+
     header('Location: profile.php?id=' . $_SESSION['usuario_id'] . '&sucesso=editado');
     exit();
 }
