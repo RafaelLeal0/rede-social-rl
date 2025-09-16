@@ -1,10 +1,9 @@
 <?php
-// includes/footer.php
 ?>
     </main>
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2023 RL - Todos os direitos reservados</p>
+            <p>&copy; 2025 RL - Todos os direitos reservados</p>
         </div>
     </footer>
     <script src="../assets/js/main.js"></script>

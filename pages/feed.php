@@ -1,18 +1,14 @@
 <?php
-// pages/feed.php
 require_once '../includes/auth-check.php';
 require_once '../includes/conexao.php';
 require_once '../includes/functions.php';
 
-// Postar nova mensagem
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['conteudo'])) {
     $conteudo = filter_input(INPUT_POST, 'conteudo', FILTER_SANITIZE_STRING);
     $usuario_id = $_SESSION['usuario_id'];
-    
-    // Processar upload de imagem
+
     $imagem = null;
     if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] === UPLOAD_ERR_OK) {
-        // Criar diretório se não existir
         if (!file_exists('../uploads/posts')) {
             mkdir('../uploads/posts', 0777, true);
         }
@@ -32,21 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['conteudo'])) {
     header('Location: feed.php');
     exit();
 }
-
-// Curtir/descurtir post
 if (isset($_GET['curtir'])) {
     $post_id = filter_input(INPUT_GET, 'curtir', FILTER_SANITIZE_NUMBER_INT);
-    
-    // Verificar se já curtiu
     $stmt = $pdo->prepare("SELECT id FROM curtidas WHERE usuario_id = ? AND post_id = ?");
     $stmt->execute([$_SESSION['usuario_id'], $post_id]);
     
     if ($stmt->fetch()) {
-        // Descurtir
         $stmt = $pdo->prepare("DELETE FROM curtidas WHERE usuario_id = ? AND post_id = ?");
         $stmt->execute([$_SESSION['usuario_id'], $post_id]);
     } else {
-        // Curtir
         $stmt = $pdo->prepare("INSERT INTO curtidas (usuario_id, post_id) VALUES (?, ?)");
         $stmt->execute([$_SESSION['usuario_id'], $post_id]);
     }
@@ -54,11 +44,7 @@ if (isset($_GET['curtir'])) {
     header('Location: feed.php');
     exit();
 }
-
-// Buscar posts
 $posts = getPosts($pdo, $_SESSION['usuario_id']);
-
-// Buscar sugestões de usuários para seguir
 $stmt = $pdo->prepare("
     SELECT u.* 
     FROM usuarios u 
@@ -71,8 +57,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$_SESSION['usuario_id'], $_SESSION['usuario_id']]);
 $sugestoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Buscar usuário atual
 $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
 ?>
 
@@ -95,7 +79,6 @@ $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
 .feed {
     flex: 1;
 }
-
 .profile-card {
     background: #fff;
     padding: 20px;
@@ -135,6 +118,7 @@ $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
     background: none;
     border: 2px solid #007bff;
     color: #007bff;
+    text-decoration: none;
 }
 
 .btn-outline:hover {
@@ -170,7 +154,6 @@ $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
 .search-box input {
     width: 100%;
     padding: 10px 40px 10px 16px;
-    border: 2px solid #007bff;
     border-radius: 4px;
     font-size: 16px;
 }
@@ -387,7 +370,6 @@ $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
 }
 </style>
 <script>
-// Abrir/fechar menu de opções dos posts
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.post-options-btn').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
@@ -410,7 +392,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class="container">
     <div class="feed-container">
-        <!-- Sidebar esquerda -->
         <div class="sidebar">
             <div class="profile-card">
                 <img src="../uploads/avatars/<?php echo $usuario['avatar']; ?>" alt="Avatar" class="profile-avatar">
@@ -431,8 +412,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </ul>
             </div>
         </div>
-
-        <!-- Feed principal -->
         <div class="feed">
             <div class="create-post">
                 <form method="POST" enctype="multipart/form-data">
@@ -533,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <a href="#">Termos de Serviço</a>
                 <a href="#">Política de Privacidade</a>
                 <a href="#">Contato</a>
-                <p>© 2023 RL</p>
+                <p>© 2025 RL</p>
             </div>
         </div>
     </div>
