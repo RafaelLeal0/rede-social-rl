@@ -1,5 +1,4 @@
 <?php
-// pages/register.php
 session_start();
 require_once '../includes/conexao.php';
 
@@ -10,23 +9,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $senha = $_POST['senha'];
     $confirmar_senha = $_POST['confirmar_senha'];
     
-    // Verificar se as senhas coincidem
     if ($senha !== $confirmar_senha) {
         $erro = "As senhas não coincidem!";
     } else {
-        // Verificar se email já existe
         $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = ?");
         $stmt->execute([$email]);
         if ($stmt->fetch()) {
             $erro = "Este email já está em uso!";
         } else {
-            // Verificar se username já existe
             $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE username = ?");
             $stmt->execute([$username]);
             if ($stmt->fetch()) {
                 $erro = "Este nome de usuário já está em uso!";
             } else {
-                // Inserir novo usuário
                 $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
                 $stmt = $pdo->prepare("INSERT INTO usuarios (nome, email, username, senha) VALUES (?, ?, ?, ?)");
                 if ($stmt->execute([$nome, $email, $username, $senha_hash])) {

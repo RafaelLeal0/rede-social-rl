@@ -10,7 +10,6 @@ if (!isset($_GET['id'])) {
 
 $post_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-// Buscar post
 $stmt = $pdo->prepare("SELECT * FROM posts WHERE id = ? AND usuario_id = ?");
 $stmt->execute([$post_id, $_SESSION['usuario_id']]);
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -24,13 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conteudo = filter_input(INPUT_POST, 'conteudo', FILTER_SANITIZE_STRING);
     $imagem = $post['imagem'];
 
-    // Processar upload de nova imagem
     if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] === UPLOAD_ERR_OK) {
         $extensao = pathinfo($_FILES['imagem']['name'], PATHINFO_EXTENSION);
         $nome_imagem = uniqid() . '.' . $extensao;
         $destino = '../uploads/posts/' . $nome_imagem;
         if (move_uploaded_file($_FILES['imagem']['tmp_name'], $destino)) {
-            // Remove imagem antiga se existir
             if ($imagem) {
                 @unlink('../uploads/posts/' . $imagem);
             }

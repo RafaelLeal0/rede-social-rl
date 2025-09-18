@@ -1,8 +1,7 @@
 <?php
-// pages/search.php
 require_once '../includes/auth-check.php';
 require_once '../includes/conexao.php';
-require_once '../includes/functions.php'; // Adicionado esta linha
+require_once '../includes/functions.php'; 
 
 $termo = isset($_GET['q']) ? filter_input(INPUT_GET, 'q', FILTER_SANITIZE_STRING) : '';
 
@@ -10,7 +9,6 @@ $usuarios = [];
 $posts = [];
 
 if (!empty($termo)) {
-    // Buscar usuários
     $stmt = $pdo->prepare("
         SELECT u.*, 
                EXISTS(SELECT 1 FROM seguidores WHERE seguidor_id = ? AND seguido_id = u.id) as segue
@@ -21,8 +19,6 @@ if (!empty($termo)) {
     $like_termo = '%' . $termo . '%';
     $stmt->execute([$_SESSION['usuario_id'], $like_termo, $like_termo]);
     $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Buscar posts
     $stmt = $pdo->prepare("
         SELECT p.*, u.username, u.avatar, 
                (SELECT COUNT(*) FROM curtidas WHERE post_id = p.id) as curtidas_count,
@@ -54,7 +50,6 @@ if (!empty($termo)) {
         
         <?php if (!empty($termo)): ?>
             <div class="search-results">
-                <!-- Resultados de usuários -->
                 <?php if (count($usuarios) > 0): ?>
                     <div class="search-section">
                         <h2>Usuários</h2>
@@ -79,8 +74,6 @@ if (!empty($termo)) {
                         </div>
                     </div>
                 <?php endif; ?>
-                
-                <!-- Resultados de posts -->
                 <?php if (count($posts) > 0): ?>
                     <div class="search-section">
                         <h2>Posts</h2>

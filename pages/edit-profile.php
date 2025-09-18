@@ -12,25 +12,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bio = filter_input(INPUT_POST, 'bio', FILTER_SANITIZE_STRING);
     $senha_atual = $_POST['senha_atual'];
     $nova_senha = $_POST['nova_senha'];
-    
-    // Verificar se username já existe (exceto para o usuário atual)
+
     $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE username = ? AND id != ?");
     $stmt->execute([$username, $_SESSION['usuario_id']]);
     if ($stmt->fetch()) {
         $erro = "Este nome de usuário já está em uso!";
     } else {
-        // Atualizar dados básicos
         $stmt = $pdo->prepare("UPDATE usuarios SET nome = ?, username = ?, bio = ? WHERE id = ?");
         $stmt->execute([$nome, $username, $bio, $_SESSION['usuario_id']]);
-        
-        // Processar upload de avatar
+
         if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
             $extensao = pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION);
             $nome_avatar = uniqid() . '.' . $extensao;
             $destino = '../uploads/avatars/' . $nome_avatar;
             
             if (move_uploaded_file($_FILES['avatar']['tmp_name'], $destino)) {
-                // Remover avatar antigo se não for o padrão
                 if ($usuario['avatar'] !== 'default-avatar.jpg') {
                     unlink('../uploads/avatars/' . $usuario['avatar']);
                 }
@@ -39,8 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$nome_avatar, $_SESSION['usuario_id']]);
             }
         }
-        
-        // Alterar senha se fornecida
+
         if (!empty($senha_atual) && !empty($nova_senha)) {
             if (password_verify($senha_atual, $usuario['senha'])) {
                 $nova_senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
@@ -53,20 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $sucesso = "Perfil atualizado com sucesso!";
         }
-        
-        // Atualizar dados na sessão
         $_SESSION['username'] = $username;
     }
 }
 
-// Buscar dados atualizados
 $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
 ?>
 
 <?php include '../includes/header.php'; ?>
 
 <style>
-/* Design clean para edição de perfil */
 .container {
     max-width: 500px;
     margin: 0 auto;

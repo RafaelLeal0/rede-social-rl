@@ -3,7 +3,6 @@ require_once '../includes/auth-check.php';
 require_once '../includes/conexao.php';
 require_once '../includes/functions.php';
 
-// Sua consulta SQL aqui (mantida igual)
 $stmt = $pdo->prepare("
     SELECT u.id, u.nome, u.username, u.avatar, 
            (SELECT mensagem FROM mensagens 
@@ -82,7 +81,6 @@ if (isset($_GET['user'])) {
 
 <div class="container">
     <div class="chat-container">
-        <!-- Lista de conversas -->
         <div class="conversations-list">
             <h2>Conversas</h2>
             <div class="conversations">
@@ -119,8 +117,6 @@ if (isset($_GET['user'])) {
                 <?php endif; ?>
             </div>
         </div>
-
-        <!-- Área de chat -->
         <div class="chat-area">
             <?php if ($user_chat): ?>
                 <div class="chat-header">
@@ -161,14 +157,11 @@ if (isset($_GET['user'])) {
     </div>
 </div>
 
-<!-- CSS DIRETO NA PÁGINA PARA GARANTIR QUE FUNCIONE -->
 <style>
-/* RESET DE ESTILOS PARA O CHAT */
 .chat-container * {
     box-sizing: border-box;
 }
 
-/* CONTAINER PRINCIPAL */
 .chat-container {
     display: flex;
     height: 70vh;
@@ -179,7 +172,6 @@ if (isset($_GET['user'])) {
     margin-bottom: 20px;
 }
 
-/* LISTA DE CONVERSAS (LADO ESQUERDO) */
 .conversations-list {
     width: 300px;
     border-right: 1px solid #eee;
@@ -288,7 +280,6 @@ if (isset($_GET['user'])) {
     margin-bottom: 15px;
 }
 
-/* ÁREA DE CHAT (LADO DIREITO) */
 .chat-area {
     flex: 1;
     display: flex;
@@ -335,7 +326,6 @@ if (isset($_GET['user'])) {
     text-overflow: ellipsis;
 }
 
-/* CONTÊINER DE MENSAGENS - ESSENCIAL PARA O SCROLL */
 .messages-container {
     flex: 1;
     padding: 20px;
@@ -456,7 +446,6 @@ if (isset($_GET['user'])) {
     margin-bottom: 20px;
 }
 
-/* BARRAS DE SCROLL PERSONALIZADAS */
 .conversations::-webkit-scrollbar {
     width: 8px;
 }
@@ -541,20 +530,17 @@ if (isset($_GET['user'])) {
 </style>
 
 <script>
-// Script para garantir que o scroll funcione
 document.addEventListener('DOMContentLoaded', function() {
     const messagesContainer = document.getElementById('messages-container');
     if (messagesContainer) {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
-    
-    // Forçar redimensionamento para garantir que o scroll funcione
+
     setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
     }, 100);
 });
 
-// Função auxiliar para debug - verificar se os elementos têm altura
 function debugHeights() {
     console.log('Altura do container de conversas:', document.querySelector('.conversations').scrollHeight);
     console.log('Altura do container de mensagens:', document.getElementById('messages-container')?.scrollHeight);

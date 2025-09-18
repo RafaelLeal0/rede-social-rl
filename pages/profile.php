@@ -1,10 +1,8 @@
 <?php
-// pages/profile.php
 require_once '../includes/auth-check.php';
 require_once '../includes/conexao.php';
 require_once '../includes/functions.php';
 
-// Verificar se o parâmetro id está presente
 if (!isset($_GET['id'])) {
     header('Location: feed.php');
     exit();
@@ -13,31 +11,24 @@ if (!isset($_GET['id'])) {
 $perfil_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $usuario_perfil = getUsuarioById($pdo, $perfil_id);
 
-// Verificar se o usuário existe
 if (!$usuario_perfil) {
-    // Usuário não encontrado, redirecionar com mensagem de erro
     $_SESSION['erro'] = "Usuário não encontrado.";
     header('Location: feed.php');
     exit();
 }
 
-// Verificar se é o próprio perfil ou de outro usuário
 $eh_proprio_perfil = ($_SESSION['usuario_id'] == $perfil_id);
 
-// Seguir/deixar de seguir
 if (isset($_GET['seguir'])) {
     if (!$eh_proprio_perfil) {
-        // Verificar se já segue
         $stmt = $pdo->prepare("SELECT id FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?");
         $stmt->execute([$_SESSION['usuario_id'], $perfil_id]);
         
         if ($stmt->fetch()) {
-            // Deixar de seguir
             $stmt = $pdo->prepare("DELETE FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?");
             $stmt->execute([$_SESSION['usuario_id'], $perfil_id]);
             $_SESSION['sucesso'] = "Deixou de seguir @" . $usuario_perfil['username'];
         } else {
-            // Seguir
             $stmt = $pdo->prepare("INSERT INTO seguidores (seguidor_id, seguido_id) VALUES (?, ?)");
             $stmt->execute([$_SESSION['usuario_id'], $perfil_id]);
             $_SESSION['sucesso'] = "Agora você segue @" . $usuario_perfil['username'];
@@ -47,13 +38,10 @@ if (isset($_GET['seguir'])) {
         exit();
     }
 }
-
-// Verificar se o usuário atual segue este perfil
 $stmt = $pdo->prepare("SELECT id FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?");
 $stmt->execute([$_SESSION['usuario_id'], $perfil_id]);
 $segue = $stmt->fetch() ? true : false;
 
-// Buscar contagens de seguidores e seguindo
 $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM seguidores WHERE seguido_id = ?");
 $stmt->execute([$perfil_id]);
 $seguidores = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
@@ -62,7 +50,6 @@ $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM seguidores WHERE seguidor_i
 $stmt->execute([$perfil_id]);
 $seguindo = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 
-// Buscar posts do usuário
 $stmt = $pdo->prepare("
     SELECT p.*, u.username, u.avatar, 
            (SELECT COUNT(*) FROM curtidas WHERE post_id = p.id) as curtidas_count,
@@ -76,7 +63,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([$_SESSION['usuario_id'], $perfil_id]);
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Garantir que $posts seja sempre um array, mesmo se vazio
 if (!$posts) {
     $posts = [];
 }
@@ -85,7 +71,6 @@ if (!$posts) {
 <?php include '../includes/header.php'; ?>
 
 <style>
-/* ESTILOS PARA A PÁGINA DE PERFIL */
 .profile-header {
     background: white;
     border-radius: 15px;
@@ -223,7 +208,6 @@ if (!$posts) {
     gap: 12px;
 }
 
-/* POSTS MENORES E MAIS COMPACTOS */
 .post {
     background: #f8f9fa;
     border-radius: 8px;
@@ -318,7 +302,6 @@ if (!$posts) {
     font-size: 14px;
 }
 
-/* GRID LAYOUT PARA POSTS COM IMAGENS */
 @media (min-width: 768px) {
     .posts {
         display: grid;
@@ -331,7 +314,6 @@ if (!$posts) {
     }
 }
 
-/* RESPONSIVIDADE */
 @media (max-width: 768px) {
     .profile-info {
         flex-direction: column;
@@ -416,7 +398,6 @@ if (!$posts) {
     }
 }
 
-/* ANIMAÇÕES SUAVES */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -425,8 +406,6 @@ if (!$posts) {
 .post {
     animation: fadeIn 0.3s ease-out;
 }
-
-/* ESTILOS PARA POSTS LONGS */
 .post-content {
     max-height: 3.6em;
     overflow: hidden;
@@ -441,7 +420,6 @@ if (!$posts) {
     -webkit-line-clamp: unset;
 }
 
-/* Mensagens de alerta */
 .alert {
     padding: 12px 15px;
     border-radius: 8px;
@@ -463,7 +441,6 @@ if (!$posts) {
 </style>
 
 <div class="container">
-    <!-- Mensagens de alerta -->
     <?php if (isset($_SESSION['sucesso'])): ?>
         <div class="alert alert-success">
             <?php echo $_SESSION['sucesso']; unset($_SESSION['sucesso']); ?>

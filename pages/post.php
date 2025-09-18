@@ -1,13 +1,10 @@
 <?php
-// pages/post.php
 require_once '../includes/auth-check.php';
 require_once '../includes/conexao.php';
 require_once '../includes/functions.php';
 
-// Buscar usuário atual para obter o avatar
 $usuario_atual = getUsuarioById($pdo, $_SESSION['usuario_id']);
 
-// Verificar se o parâmetro id está presente
 if (!isset($_GET['id'])) {
     header('Location: feed.php');
     exit();
@@ -15,7 +12,6 @@ if (!isset($_GET['id'])) {
 
 $post_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-// Buscar post
 $stmt = $pdo->prepare("
     SELECT p.*, u.username, u.avatar, 
            (SELECT COUNT(*) FROM curtidas WHERE post_id = p.id) as curtidas_count,
@@ -32,19 +28,14 @@ if (!$post) {
     header('Location: feed.php');
     exit();
 }
-
-// Curtir/descurtir post
 if (isset($_GET['curtir'])) {
-    // Verificar se já curtiu
     $stmt = $pdo->prepare("SELECT id FROM curtidas WHERE usuario_id = ? AND post_id = ?");
     $stmt->execute([$_SESSION['usuario_id'], $post_id]);
     
     if ($stmt->fetch()) {
-        // Descurtir
         $stmt = $pdo->prepare("DELETE FROM curtidas WHERE usuario_id = ? AND post_id = ?");
         $stmt->execute([$_SESSION['usuario_id'], $post_id]);
     } else {
-        // Curtir
         $stmt = $pdo->prepare("INSERT INTO curtidas (usuario_id, post_id) VALUES (?, ?)");
         $stmt->execute([$_SESSION['usuario_id'], $post_id]);
     }
@@ -53,7 +44,6 @@ if (isset($_GET['curtir'])) {
     exit();
 }
 
-// Adicionar comentário
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comentario'])) {
     $comentario = filter_input(INPUT_POST, 'comentario', FILTER_SANITIZE_STRING);
     
@@ -64,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comentario'])) {
     exit();
 }
 
-// Buscar comentários
 $stmt = $pdo->prepare("
     SELECT c.*, u.username, u.avatar
     FROM comentarios c

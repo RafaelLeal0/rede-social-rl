@@ -63,6 +63,225 @@ $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
 <?php include '../includes/header.php'; ?>
 
 <style>
+:root {
+  --primary-color: #4a90e2;
+  --primary-hover: #3a80d2;
+  --primary-active: #2a70c2;
+  --danger-color: #e0245e;
+  --danger-hover: #d0144e;
+  --danger-active: #c0043e;
+  --success-color: #28a745;
+  --success-hover: #218838;
+  --success-active: #1e7e34;
+  --border-radius: 8px;
+  --transition-speed: 0.2s;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-speed) ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+}
+
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  background-color: var(--primary-active);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 10px 18px;
+}
+
+.btn-outline:hover {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: var(--danger-hover);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-danger:active {
+  background-color: var(--danger-active);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: var(--success-hover);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-success:active {
+  background-color: var(--success-active);
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--primary-color);
+  box-shadow: none;
+  padding: 8px 12px;
+}
+
+.btn-text:hover {
+  background-color: rgba(74, 144, 226, 0.1);
+  box-shadow: none;
+}
+
+.btn-text:active {
+  background-color: rgba(74, 144, 226, 0.2);
+  transform: none;
+}
+
+.btn-icon {
+  padding: 10px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.btn-sm.btn-outline {
+  padding: 6px 14px;
+}
+
+.btn-lg {
+  padding: 16px 28px;
+  font-size: 18px;
+}
+
+.btn-lg.btn-outline {
+  padding: 14px 26px;
+}
+
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn:disabled:hover {
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.btn-ripple:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(30, 30);
+    opacity: 0;
+  }
+}
+
+.post-actions .post-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: all var(--transition-speed) ease;
+}
+
+.post-actions .post-action:hover {
+  background-color: rgba(74, 144, 226, 0.1);
+  transform: translateY(-2px);
+}
+
+.message-input button {
+  transition: all var(--transition-speed) ease;
+}
+
+.message-input button:hover {
+  transform: scale(1.05);
+}
+
+.comment-input button {
+  transition: all var(--transition-speed) ease;
+}
+
+.comment-input button:hover {
+  transform: translateY(-1px);
+}
+
 .feed-container {
     display: flex;
     justify-content: space-between;
@@ -368,6 +587,126 @@ $usuario = getUsuarioById($pdo, $_SESSION['usuario_id']);
     color: #aaa;
     margin-top: 2px;
 }
+
+/* ESTILOS ESPECÍFICOS PARA OS BOTÕES "FOTO" E "PUBLICAR" */
+.create-post {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+}
+
+.post-author {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.post-author .post-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.post-author textarea {
+    flex: 1;
+    border: none;
+    resize: none;
+    min-height: 60px;
+    font-size: 18px;
+    padding: 12px;
+    border-bottom: 2px solid #f0f2f5;
+    font-family: inherit;
+    background: #fafafa;
+    border-radius: 8px;
+}
+
+.post-author textarea:focus {
+    outline: none;
+    border-color: #4a90e2;
+    background: #fff;
+}
+
+.post-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+    gap: 15px; /* ESPAÇAMENTO ADICIONADO ENTRE OS BOTÕES */
+}
+
+/* BOTÃO FOTO MELHORADO */
+.btn-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: transparent;
+    border: 2px solid #4a90e2;
+    border-radius: 8px;
+    color: #4a90e2;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-file:hover {
+    background: #4a90e2;
+    color: white;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-file:active {
+    transform: translateY(0);
+}
+
+/* BOTÃO PUBLICAR MELHORADO */
+.btn-publish {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #4a90e2;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.btn-publish:hover {
+    background: #3a80d2;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-publish:active {
+    transform: translateY(0);
+}
+
+/* RESPONSIVIDADE PARA OS BOTÕES */
+@media (max-width: 768px) {
+    .post-options {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .btn-file, .btn-publish {
+        justify-content: center;
+    }
+}
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -385,6 +724,19 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.post-options-menu').forEach(function(menu) {
                 menu.classList.remove('open');
             });
+        }
+    });
+
+    // Script para mostrar o nome do arquivo quando uma imagem é selecionada
+    document.getElementById('imagem').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name;
+        if (fileName) {
+            const label = document.querySelector('.btn-file');
+            label.innerHTML = `<i class="fas fa-image"></i> ${fileName}`;
+            
+            // Adiciona uma indicação visual de que uma imagem foi selecionada
+            label.style.background = 'rgba(74, 144, 226, 0.1)';
+            label.style.borderColor = '#3a80d2';
         }
     });
 });
@@ -420,11 +772,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         <textarea name="conteudo" placeholder="O que está acontecendo?" required></textarea>
                     </div>
                     <div class="post-options">
-                        <label for="imagem" class="btn btn-outline">
+                        <label for="imagem" class="btn-file">
                             <i class="fas fa-image"></i> Foto
                         </label>
                         <input type="file" id="imagem" name="imagem" accept="image/*" style="display: none;">
-                        <button type="submit" class="btn btn-primary">Publicar</button>
+                        <button type="submit" class="btn-publish">Publicar</button>
                     </div>
                 </form>
             </div>
